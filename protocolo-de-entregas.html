@@ -1,0 +1,126 @@
+<!--
+The MIT License
+
+Copyright (c) 2024 Wellington Vidal
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+This project includes code from:
+
+* **qrcode.min.js:** Copyright (c) 2020 datalog.
+  Licensed under MIT License.
+  Link: https://github.com/datalog/qrcode-svg
+-->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <title>Protocolo de Entregas</title>
+        <meta charset="UTF-8">
+        <meta name="author" content="Wellington Vidal">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style/style.css">
+    </head>
+    <body>
+        <div id="pagina">
+            <form>
+                <div id="cabecalho-form">
+                    <h2>Protocolo de Entregas</h2>
+                </div>
+                <div id="abas">
+                    <div id="aba-cadastro" onclick="SelecionaAba(this)">Cadastro</div>
+                    <div id="aba-configuracao" onclick="SelecionaAba(this)">Sobre</div>
+                </div>
+                <div id="div-forms">
+                    <div id="form-cadastro">
+                        <div>
+                            <label for="txtDestino">Destino:</label>
+                        </div>
+                        <div>
+                            <input list="histDestinos" id="txtDestino" placeholder="Destino" onkeyup="FormataCampo('DESTINO', this)" onkeydown="FormataCampo('DESTINO', this)">
+                            <datalist id="histDestinos"></datalist>
+                        </div>
+                        <div>
+                            <label for="txtDescricao">Descrição:</label>
+                        </div>
+                        <div>
+                            <input type="text" id="txtDescricao" placeholder="Descrição" onkeyup="FormataCampo('DESCRICAO', this)" onkeydown="FormataCampo('DESCRICAO', this)">
+                        </div>
+                        <div class="divGrupoBotoes">
+                            <button type="reset" id="btnLimpar">Limpar</button>
+                            <button type="button" id="btnCadastrar" onclick="CadastraProtocolo()">Cadastrar</button>
+                        </div>
+                    </div>
+                    <div id="form-configuracao">
+                        <div id="div-sobre">
+                            <ol>
+                                <li>Faça o download do aplicativo Android no link abaixo.</li>
+                                <li>Cadastre protocolos no navegador de seu computador.</li>
+                                <li>Exporte por meio do Qrcode para o aplicativo mobile de mesmo nome.</li>
+                            </ol>
+
+                            <div id="div-link">
+                                <a href="https://play.google.com/store/apps/details?id=com.wk.protocolodeentrega" target="_blank">PlayStore: Protocolo de Entregas</a>
+                            </div>
+                            <div id="declaracao-licenca">
+                                <p>The MIT License</p>
+                                <p>Copyright (c) 2024 Wellington Vidal</p>
+                                <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+                                <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+                                <p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+                                <p>This project includes code from:</p>
+                                <p>* **qrcode.min.js:** Copyright (c) 2020 datalog.<br>
+                                Licensed under MIT License.<br>
+                                Link: <a href="https://github.com/datalog/qrcode-svg" target="_blank">https://github.com/datalog/qrcode-svg</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="div-tabela">
+                <table id="tabela">
+                    <tr class="tr-cabecalho">
+                        <th colspan="9">Lista de Protocolos de Entrega</th>
+                    </tr>
+                    <tr class="tr-cabecalho">
+                        <td><input type="checkbox" id="chkTodos"></td>
+                        <th><input type="text" placeholder="Nº" id="txtFiltroNum" onkeyup="FiltraDados()"></th>
+                        <th><input type="text" placeholder="Destino" id="txtFiltroDestino" onkeyup="FiltraDados()"></th>
+                        <th><input type="text" placeholder="Descrição" id="txtFiltroDescricao" onkeyup="FiltraDados()"></th>
+                        <th><input type="text" placeholder="Data Envio" id="txtFiltroDataEnvio" onkeyup="FiltraDados()"></th>
+                        <th><input type="text" placeholder="Data Recebeu" id="txtFiltroDataRecebeu" onkeyup="FiltraDados()"></th>
+                        <th><input type="text" placeholder="Quem Recebeu" id="txtFiltroQuemRecebeu" onkeyup="FiltraDados()"></th>
+                        <th>
+                            <select id="selFiltroSituacao" onchange="FiltraDados()">
+                                <option value="Pendente">Pendente</option>
+                                <option value="Entregue">Entregue</option>
+                            </select>
+                        </th>
+                        <th>Qr</th>
+                    </tr>
+                    <tr id="trZero">
+                        <td>---</td>
+                        <td>---</td>
+                        <td>---</td>
+                        <td>---</td>
+                        <td>---</td>
+                        <td>---</td>
+                        <td>---</td>
+                        <td>---</td>
+                        <td>---</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <script src="script/script.js"></script>
+
+        <!-- https://github.com/datalog/qrcode-svg under MIT license-->
+        <script src="script/qrcode.min.js"></script>
+    </body>
+</html>

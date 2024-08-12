@@ -1,0 +1,171 @@
+/*
+The MIT License
+
+Copyright (c) 2024 Wellington Vidal
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+This project includes code from:
+
+* **qrcode.min.js:** Copyright (c) 2020 datalog.
+  Licensed under MIT License.
+  Link: https://github.com/datalog/qrcode-svg
+*/
+
+*{
+    box-sizing: border-box;
+}
+
+form{
+    width: 600px;
+    height: 310px;
+    margin: auto;
+    padding: 5px;
+    background-color: #dcdcdc;
+    border-radius: 25px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#cabecalho-form{
+    background-color: #007700;
+    color: #ffffff;
+    text-align: center;
+    padding: 5px;
+    margin-bottom: 5px;
+    border-radius: 25px;
+}
+
+#aba-cadastro, #aba-configuracao{
+    float: left;
+    width: 50%;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+    border-left: 1px solid grey;
+    border-right: 1px solid grey;
+    border-top: 1px solid grey;
+}
+
+#aba-configuracao{
+    border-bottom: 1px solid grey;
+}
+
+#form-configuracao{
+    display: none;
+}
+
+#div-forms{
+    clear: left;
+}
+
+#form-cadastro, #form-configuracao{
+    border-left: 1px solid grey;
+    border-right: 1px solid grey;
+    border-bottom: 1px solid grey;
+    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: 25px;
+    padding: 10px;
+}
+
+#div-sobre{
+    height: 150px;
+    overflow-x: scroll;
+    overflow-y: scroll;
+}
+
+input[type=text], select, input[list]{
+    padding: 5px;
+    width: 100%;
+    margin-bottom: 5px;
+    border-radius: 25px;
+}
+
+button{
+    padding: 10px;
+    color: #ffffff;
+    border-radius: 25px;
+}
+
+.divGrupoBotoes{
+    text-align: right;
+}
+
+#btnCadastrar, #btnIniciar{
+    background-color: #007700;
+}
+
+#btnLimpar{
+    background-color: #770000;
+}
+
+.btnQrCode{
+    background-color: #000077;
+}
+
+.div-tabela{
+    height: 250px;
+    margin: auto;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    padding: 5px;
+    width: 70%;
+    overflow-x: scroll;
+    overflow-y: scroll;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid;
+    text-align: center;
+}
+
+th input[type=text], select{
+    text-align: center;
+}
+
+.tr-cabecalho{
+    background-color: #007700;
+    color: #ffffff;
+}
+
+.tr-cabecalho input, select{
+    background-color: #007700;
+    color: #ffffff;
+    font-weight: bold;
+    border: none;
+}
+
+#trZero{
+    text-align: center;
+}
+
+.txtPadrao{
+    border-radius: 10px;
+}
+
+#txtFiltroNum{
+    width: 40px;
+}
+
+#selFiltroSituacao{
+    width: 90px;
+}
+
+label{
+    clear: both;
+    display: block;
+}
+
+#div-link{
+    text-align: center;
+}
