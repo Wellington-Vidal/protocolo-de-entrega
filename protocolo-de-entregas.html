@@ -51,6 +51,7 @@ This project includes code from:
                             <input type="text" id="txtDescricao" placeholder="Descrição" onkeyup="FormataCampo('DESCRICAO', this)" onkeydown="FormataCampo('DESCRICAO', this)">
                         </div>
                         <div class="divGrupoBotoes">
+                            <button type="button" id="btnExportar" onclick="ExportaXML()">Exportar XML</button>
                             <button type="reset" id="btnLimpar">Limpar</button>
                             <button type="button" id="btnCadastrar" onclick="CadastraProtocolo()">Cadastrar</button>
                         </div>
@@ -85,10 +86,11 @@ This project includes code from:
             <div class="div-tabela">
                 <table id="tabela">
                     <tr class="tr-cabecalho">
-                        <th colspan="9">Lista de Protocolos de Entrega</th>
+                        <th colspan="10">Lista de Protocolos de Entrega</th>
                     </tr>
                     <tr class="tr-cabecalho">
-                        <td><input type="checkbox" id="chkTodos"></td>
+                        <td><input type="checkbox" id="chkTodos" onchange="SelecionaTodos()"></td>
+                        <td>?</td>
                         <th><input type="text" placeholder="Nº" id="txtFiltroNum" onkeyup="FiltraDados()"></th>
                         <th><input type="text" placeholder="Destino" id="txtFiltroDestino" onkeyup="FiltraDados()"></th>
                         <th><input type="text" placeholder="Descrição" id="txtFiltroDescricao" onkeyup="FiltraDados()"></th>
@@ -104,6 +106,7 @@ This project includes code from:
                         <th>Qr</th>
                     </tr>
                     <tr id="trZero">
+                        <td>---</td>
                         <td>---</td>
                         <td>---</td>
                         <td>---</td>
