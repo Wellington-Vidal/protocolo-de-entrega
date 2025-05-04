@@ -60,35 +60,42 @@ function CadastraProtocolo()
     let txtDestino = document.getElementById('txtDestino');
     let txtDescricao = document.getElementById('txtDescricao');
 
-    document.getElementById('trZero').style.display = "none";
-    let dataFormatada = PegaDataHojeFormatada();
-
-    //indexedDB
-    const transaction = db.transaction([tabelaProtocolos], "readwrite");
-    const objectStore = transaction.objectStore(tabelaProtocolos);
-
-    const novoProtocolo = {
-        destino: txtDestino.value, 
-        descricao: txtDescricao.value, 
-        data_envio: dataFormatada, 
-        data_recebeu: "---", 
-        quem_recebeu: "---", 
-        situacao: "Pendente"
-    }
-
-    const request = objectStore.add(novoProtocolo);
-
-    transaction.oncomplete = (event) => {
-        console.log("oncomplete", event);
-        alert("Protocolo Cadastrado com Sucesso!");
-
-        ListaProtocolos();
-        FiltraDados();
-    };
+    if ((txtDestino.value != '') && (txtDescricao.value != ''))
+    {
+        document.getElementById('trZero').style.display = "none";
+        let dataFormatada = PegaDataHojeFormatada();
     
-    transaction.onerror = (event) => {
-        console.log("onerror", event);
-    };
+        //indexedDB
+        const transaction = db.transaction([tabelaProtocolos], "readwrite");
+        const objectStore = transaction.objectStore(tabelaProtocolos);
+    
+        const novoProtocolo = {
+            destino: txtDestino.value, 
+            descricao: txtDescricao.value, 
+            data_envio: dataFormatada, 
+            data_recebeu: "---", 
+            quem_recebeu: "---", 
+            situacao: "Pendente"
+        }
+    
+        const request = objectStore.add(novoProtocolo);
+    
+        transaction.oncomplete = (event) => {
+            console.log("oncomplete", event);
+            alert("Protocolo Cadastrado com Sucesso!");
+    
+            ListaProtocolos();
+            FiltraDados();
+        };
+        
+        transaction.onerror = (event) => {
+            console.log("onerror", event);
+        };
+    }
+    else
+    {
+        alert('Digite o Destino e a Descrição!');
+    }
 }
 
 function ListaProtocolos()
@@ -113,6 +120,7 @@ function ListaProtocolos()
             let situacao = cursor.value.situacao;
 
             let colunas = [
+                `<input type='checkbox' id='CHK_${id}' class='chk_grupo'>`,
                 `<button type='button' onclick=\"AbreMenuAcoes(this, '${id}', '${situacao}')\" class='btnQrCode'>?</button>`,
                 cursor.value.id, 
                 cursor.value.destino,
@@ -131,7 +139,7 @@ function ListaProtocolos()
                 let col = novaLinha.insertCell(i);
                 col.innerHTML = colunas[i];
 
-                if (i == 3)
+                if (i == 4)
                 {                    
                     col.innerHTML = colunas[i].replace(/[,]/g, ",\n");
                 }
@@ -257,6 +265,16 @@ function PegaDataHojeFormatada()
     return dia + "/" + mes + "/" + ano;
 }
 
+function PegaHoraAgoraFormatado()
+{
+    const dataHoje = new Date();
+    let hora = dataHoje.getHours() < 10 ? '0' + dataHoje.getHours() : dataHoje.getHours();
+    let minutos = dataHoje.getMinutes()< 10 ? '0' + dataHoje.getMinutes() : dataHoje.getMinutes();
+    let segundos = dataHoje.getSeconds() < 10 ? '0' + dataHoje.getSeconds() : dataHoje.getSeconds();
+    
+    return hora + "-" + minutos + "-" + segundos;
+}
+
 function SelecionaAba(aba)
 {
     let abaCadastro = document.getElementById('aba-cadastro');
@@ -361,6 +379,7 @@ function FiltraDados()
     let trs = tabela.getElementsByTagName('tr');
 
     let valoresCampos = [null, 
+                         null,
                          txtFiltroNum.value, 
                          txtFiltroDestino.value, 
                          txtFiltroDescricao.value, 
@@ -369,14 +388,15 @@ function FiltraDados()
                          txtFiltroQuemRecebeu.value, 
                          selFiltroSituacao.value];
 
-    const totalCamposBusca = valoresCampos.length - 1;
+    const totalCamposBusca = valoresCampos.length - 2;
+    let qtdLinhasExibidas = 0;
 
     for (let i = 3 ; i < trs.length ; i++)
     {
         let tds = trs[i].getElementsByTagName('td');
         let localizou = 0;
 
-        for (let c = 1 ; c < valoresCampos.length ; c++)
+        for (let c = 2 ; c < valoresCampos.length ; c++)
         {
             if (tds[c])
             {
@@ -390,11 +410,21 @@ function FiltraDados()
         if (totalCamposBusca == localizou)
         {
             trs[i].style.display = '';
+            qtdLinhasExibidas++;
         }
         else
         {
             trs[i].style.display = 'none';
         }
+    }
+
+    if (qtdLinhasExibidas == 0)
+    {
+        document.getElementById('trZero').style.display = '';
+    }
+    else
+    {
+        document.getElementById('trZero').style.display = 'none';
     }
 }
 
@@ -573,5 +603,133 @@ function ExcluiProtocolo(idProtocolo, idJanela)
     catch (error)
     {
         alert('Erro ao excluir protocolo!');
+    }
+}
+
+function SelecionaTodos()
+{
+    const chkTodos = document.getElementById('chkTodos');
+    let chkGrupo = document.getElementsByClassName('chk_grupo');
+
+    try 
+    {
+        //DESMARCA TODOS, INCLUINDO OCULTOS
+        for (let c = 0 ; c < chkGrupo.length ; c++)
+        {
+            chkGrupo[c].checked = false;
+        }
+
+        //MARCA TODOS OS VISÍVEIS
+        for (let c = 0 ; c < chkGrupo.length ; c++)
+        {
+            if (chkGrupo[c].parentElement.parentElement.style.display == '') //TR
+            {
+                chkGrupo[c].checked = chkTodos.checked;
+            }
+        }
+    }
+    catch(e)
+    {
+        alert('Erro ao selecionar!');
+    }
+}
+
+function ExportaXML()
+{
+    let chkGrupo = document.getElementsByClassName('chk_grupo');
+    let listaIdProtocolosSelecionados = [];
+
+    try 
+    {
+        //PEGA PROTOCOLOS SELECIONADOS
+        for (let c = 0 ; c < chkGrupo.length ; c++)
+        {
+            if ((chkGrupo[c].checked) && (chkGrupo[c].parentElement.parentElement.style.display == ''))
+            {
+                let id = Number(chkGrupo[c].getAttribute('id').replace('CHK_', ''));
+    
+                listaIdProtocolosSelecionados.push(id);
+            }
+        }
+
+        if (listaIdProtocolosSelecionados.length > 0)
+        {
+            let listaProtocolos = [];
+        
+            const transaction = db.transaction([tabelaProtocolos], "readonly");
+            const objectStore = transaction.objectStore(tabelaProtocolos);
+        
+            objectStore.openCursor().onsuccess = function(event){
+                var cursor = event.target.result;
+        
+                if (cursor)
+                {
+                    if (listaIdProtocolosSelecionados.indexOf(cursor.value.id) != -1)
+                    {
+                        let objProtocolo = {id: cursor.value.id, 
+                                            destino: cursor.value.destino.trim(), 
+                                            descricao: cursor.value.descricao.trim(), 
+                                            data_envio: cursor.value.data_envio, 
+                                            data_recebeu: cursor.value.data_recebeu,
+                                            quem_recebeu: cursor.value.quem_recebeu, 
+                                            situacao: cursor.value.situacao};
+        
+                        listaProtocolos.push(objProtocolo);
+                    }
+        
+                    cursor.continue();
+                }
+                else
+                {
+                    //PREPARA ARQUIVO XML
+                    let xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+                    xml += "<protocolos>";
+
+                    for (let p = 0 ; p < listaProtocolos.length ; p++)
+                    {
+                        let protocolo = listaProtocolos[p];
+                        xml += "<protocolo>";
+
+                        for (let i = 0 ; i < Object.keys(protocolo).length ;  i++)
+                        {        
+                            let tag = Object.keys(protocolo)[i];
+                            let valor = protocolo[tag];
+                            
+                            xml += "<" + tag + ">" + valor + "</" + tag + ">";
+                        }
+
+                        xml += "</protocolo>";
+                    }
+
+                    xml += "</protocolos>";
+
+                    //INICIA DOWNLOAD DO ARQUIVO XML
+                    const dataHoje = PegaDataHojeFormatada().replace(/[\/]/g, '_');
+                    const horaAgora = PegaHoraAgoraFormatado().replace(/[-]/g, '_');
+
+                    const nomeArquivo = "PE_XML_" + dataHoje + '_' + horaAgora + '.xml';
+                    const blob = new Blob([xml], { type: 'text/xml' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+
+                    a.setAttribute('href', url);
+                    a.setAttribute('download', nomeArquivo);
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }
+            }
+        }
+        else
+        {
+            alert("Nenhum protocolo foi selecionado!");
+        }
+    }
+    catch (e) 
+    {
+        alert("Erro ao gerar XML!");
+        console.log(e);
     }
 }
