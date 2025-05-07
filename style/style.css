@@ -169,3 +169,8 @@ label{
 #div-link{
     text-align: center;
 }
+
+#selExportar{
+    background-color: #000077;
+    width: fit-content;
+}
