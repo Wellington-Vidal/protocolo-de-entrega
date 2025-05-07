@@ -634,8 +634,9 @@ function SelecionaTodos()
     }
 }
 
-function ExportaXML()
+function ExportaRelatorio()
 {
+    let selExportar =  document.getElementById('selExportar');
     let chkGrupo = document.getElementsByClassName('chk_grupo');
     let listaIdProtocolosSelecionados = [];
 
@@ -681,34 +682,106 @@ function ExportaXML()
                 }
                 else
                 {
-                    //PREPARA ARQUIVO XML
-                    let xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-                    xml += "<protocolos>";
+                    let formato = '';
+                    let dadosRelatorio = '';
 
-                    for (let p = 0 ; p < listaProtocolos.length ; p++)
+                    if (selExportar.value == 'XML')
                     {
-                        let protocolo = listaProtocolos[p];
-                        xml += "<protocolo>";
+                        //PREPARA ARQUIVO XML
+                        let xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+                        xml += "<protocolos>";
 
-                        for (let i = 0 ; i < Object.keys(protocolo).length ;  i++)
-                        {        
-                            let tag = Object.keys(protocolo)[i];
-                            let valor = protocolo[tag];
-                            
-                            xml += "<" + tag + ">" + valor + "</" + tag + ">";
+                        for (let p = 0 ; p < listaProtocolos.length ; p++)
+                        {
+                            let protocolo = listaProtocolos[p];
+                            xml += "<protocolo>";
+
+                            for (let i = 0 ; i < Object.keys(protocolo).length ;  i++)
+                            {        
+                                let tag = Object.keys(protocolo)[i];
+                                let valor = protocolo[tag];
+                                
+                                xml += "<" + tag + ">" + valor + "</" + tag + ">";
+                            }
+
+                            xml += "</protocolo>";
                         }
 
-                        xml += "</protocolo>";
+                        xml += "</protocolos>";
+
+                        formato = 'XML';
+                        dadosRelatorio = xml;
+                    }
+                    else if (selExportar.value == 'HTML')
+                    {
+                        //PREPARA ARQUIVO PDF
+                        let pdf = '<!DOCTYPE html>';
+                        pdf += '<html>';
+                        pdf += '<head>';
+                        pdf += '<title>Relatório PDF</title>';
+                        pdf += "<style>*{box-sizing: border-box;}.div-tabela{margin: auto;margin-top: 30px;margin-bottom: 10px;padding: 5px;width: 90%;overflow-x: scroll;overflow-y: scroll;} table {border-collapse: collapse;} table, th, td {border: 1px solid;text-align: center;} .tr-cabecalho{background-color: #007700;color: #ffffff;}</style>";
+                        pdf += '</head>';
+                        pdf += '<body>';
+                        pdf += "<div class='div-tabela'>";
+                        pdf += "<div style=\"margin-bottom: 20px;\"><button type='button' onclick=\"Imprimir()\">Imprimir</button></div>";
+                        pdf += '<table>';
+                        pdf += "<tr class='tr-cabecalho'><th colspan='11'>Lista de Protocolos de Entrega</th></tr>";
+                        pdf += "<tr class='tr-cabecalho'>";
+
+                        //CRIA CABECALHO
+                        let cabecalho = ['Nº', 'Destino', 'Descrição', 'Data Envio', 'Data Recebeu', 'Quem Recebeu', 'Situação', 'QR Code'];
+                        
+                        for (let c = 0 ; c < cabecalho.length ;  c++)
+                        {        
+                            let tag = cabecalho[c];
+                            pdf += "<th>" + tag + "</th>";
+                        }
+
+                        pdf += "</tr>";
+
+                        for (let p = 0 ; p < listaProtocolos.length ; p++)
+                        {
+                            pdf += "<tr>";
+
+                            let protocolo = listaProtocolos[p];
+                            
+                            for (let i = 0 ; i < Object.keys(protocolo).length ;  i++)
+                            {        
+                                let tag = Object.keys(protocolo)[i];
+                                let valor = protocolo[tag];
+                                
+                                pdf += "<td>" + valor + "</td>";
+                            }
+
+                            //INCLUI QRCODE
+                            let dadosQrCode = `Destino:${protocolo.destino}|Descrição:${protocolo.descricao}|Data Envio:${protocolo.data_envio}|Data Recebeu:${protocolo.data_recebeu}|Quem Recebeu:${protocolo.quem_recebeu}|Situação:${protocolo.situacao}|Id:${protocolo.id}|`;
+                            let qrCode = new QRCode({msg: dadosQrCode, ecl:'L'});
+
+                            let div = document.createElement('div');
+                            div.setAttribute('style', "background-color: #ffffff; position: fixed; width: 60px; height: 50px; top: 50%; left: 50%; text-align: center; border: 1px solid black;");
+                            div.appendChild(qrCode);
+                            
+                            pdf += "<td onclick=\"MostraQrcode(this)\"><div style=\"display: none;\">" + div.innerHTML  + "</div><div style=\"cursor: pointer;\">Mostrar</div></td>";
+
+                            pdf += "</tr>";
+                        }
+
+                        pdf += '</table>';
+                        pdf += '</div>';
+                        pdf += "<script>function MostraQrcode(td){for(let c=0;c<td.children.length;c++){if(td.children[c]){if (td.children[c].style.display == 'none'){td.children[c].style.display = '';}else{td.children[c].style.display = 'none';}}}}function Imprimir(){window.print();}</script>";
+                        pdf += '</body>';
+                        pdf += '</html>';
+
+                        formato = 'HTML';
+                        dadosRelatorio = pdf;
                     }
 
-                    xml += "</protocolos>";
-
-                    //INICIA DOWNLOAD DO ARQUIVO XML
+                    //INICIA DOWNLOAD DO ARQUIVO
                     const dataHoje = PegaDataHojeFormatada().replace(/[\/]/g, '_');
                     const horaAgora = PegaHoraAgoraFormatado().replace(/[-]/g, '_');
 
-                    const nomeArquivo = "PE_XML_" + dataHoje + '_' + horaAgora + '.xml';
-                    const blob = new Blob([xml], { type: 'text/xml' });
+                    const nomeArquivo = `PE_${formato}_${dataHoje}_${horaAgora}.${formato.toLowerCase()}`;
+                    const blob = new Blob([dadosRelatorio], { type: `text/${formato.toLowerCase()}` });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
 
