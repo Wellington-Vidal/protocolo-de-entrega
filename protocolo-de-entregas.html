@@ -51,7 +51,11 @@ This project includes code from:
                             <input type="text" id="txtDescricao" placeholder="Descrição" onkeyup="FormataCampo('DESCRICAO', this)" onkeydown="FormataCampo('DESCRICAO', this)">
                         </div>
                         <div class="divGrupoBotoes">
-                            <button type="button" id="btnExportar" onclick="ExportaXML()">Exportar XML</button>
+                            <select id="selExportar">
+                                <option value="XML">XML</option>
+                                <option value="HTML">HTML</option>
+                            </select>
+                            <button type="button" id="btnExportar" onclick="ExportaRelatorio()">Exportar</button>
                             <button type="reset" id="btnLimpar">Limpar</button>
                             <button type="button" id="btnCadastrar" onclick="CadastraProtocolo()">Cadastrar</button>
                         </div>
